@@ -1,0 +1,30 @@
+services:
+  database:
+      restart: always
+      image: postgres
+      volumes:
+        - postgresDB2:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: <Database Name> #optional
+        POSTGRES_USER: <Database username>
+        POSTGRES_PASSWORD: <Password>
+      ports:
+        - 5432:5432
+  web:
+    restart: always
+    build: <Folder name of application with Docker file> # collect Dockerfile from repo git@github.com:manancsa/Docker-images.git
+    command: python3 manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    volumes:
+      - web-django:/usr/src/app
+      - web-static:/usr/src/app/static
+    env_file: .env
+    environment:
+      DEBUG: 'true'
+
+
+volumes:
+  web-django:
+  web-static:
+  postgresDB2:
