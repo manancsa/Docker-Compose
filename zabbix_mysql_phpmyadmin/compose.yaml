@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mysql:8.0
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+        - db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ChangeMe
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: ChangeMe
+
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOSTS: db
+
+  zabbix:
+    #update below line to latest version of Zabbix
+    image: zabbix/zabbix-server-mysql:ubuntu-6.2.2
+    restart: always
+    environment:
+      DB_SERVER_HOST: db
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: ChangeMe      
+
+volumes:
+  db:
